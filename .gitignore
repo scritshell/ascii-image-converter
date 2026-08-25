@@ -1,0 +1,32 @@
+# Directorios de build
+build/
+build-*/
+cmake-build-*/
+
+# Artefactos de compilación
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# Generados por Qt (moc/uic/rcc los gestiona el propio build dir)
+*_autogen/
+*.qm
+
+# Modelos ONNX (no versionar pesos grandes; ver LICENSES.md y BUILDING.md
+# para cómo obtenerlos)
+resources/models/*.onnx
+
+# Configuración de usuario / IDE
+.vscode/
+.idea/
+*.user
+CMakeUserPresets.json
+
+# Sistema
+.DS_Store
+Thumbs.db
