@@ -2,9 +2,7 @@
 #
 # NO VERIFICADO EN UN ENTORNO WINDOWS REAL — se escribió y revisó con
 # cuidado, pero no hay forma de ejecutar/probar esto en el entorno donde
-# se desarrolló el resto del proyecto (Linux). Pruébalo en tu máquina
-# Windows y ajusta lo que haga falta antes de confiar en él para un
-# release — ver la nota en BUILDING.md.
+# se desarrolló el resto del proyecto (Linux). 
 #
 # Requisitos:
 # - Proyecto ya compilado en Release (ver BUILDING.md).

@@ -3,7 +3,7 @@
 namespace ascii_converter {
 
 // Enlace que se abre desde el botón de GitHub.
-inline constexpr const char* GITHUB_PROFILE_URL = "PONER_MI_URL_AQUI";
+inline constexpr const char* GITHUB_PROFILE_URL = "https://github.com/scritshell";
 
 // Tamaño fijo de la ventana principal.
 inline constexpr int kWindowWidth = 1100;
