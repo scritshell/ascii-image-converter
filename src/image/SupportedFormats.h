@@ -5,15 +5,12 @@
 
 namespace ascii_converter::image {
 
-// Lista única de extensiones soportadas (Sección 6 del spec). La comparten
-// DropZone (Fase 1) e ImageLoader (Fase 2) para no duplicar la lista.
+// Lista única de extensiones soportadas. La comparten
+// DropZone e ImageLoader para no duplicar la lista.
 inline const QStringList& supportedExtensions() {
     static const QStringList kExtensions = {
-        QStringLiteral("png"),
-        QStringLiteral("jpg"),
-        QStringLiteral("jpeg"),
-        QStringLiteral("webp"),
-        QStringLiteral("bmp"),
+        QStringLiteral("png"),  QStringLiteral("jpg"), QStringLiteral("jpeg"),
+        QStringLiteral("webp"), QStringLiteral("bmp"),
     };
     return kExtensions;
 }
@@ -23,4 +20,4 @@ inline bool isSupportedImageExtension(const QString& filePath) {
     return supportedExtensions().contains(suffix);
 }
 
-} // namespace ascii_converter::image
+}  // namespace ascii_converter::image

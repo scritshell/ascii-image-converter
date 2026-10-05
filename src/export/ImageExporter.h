@@ -29,4 +29,4 @@ public:
     bool saveToFile(const QImage& image, const QString& filePath) const;
 };
 
-} // namespace ascii_converter::exporting
+}  // namespace ascii_converter::exporting

@@ -1,5 +1,7 @@
 #include "ml/OnnxRuntimeManager.h"
+#include "application/Logging.h"
 
+#include <QElapsedTimer>
 #include <QFileInfo>
 #include <QObject>
 #include <onnxruntime_cxx_api.h>
@@ -7,9 +9,6 @@
 namespace ascii_converter::ml {
 
 struct OnnxRuntimeManager::Impl {
-    // Un Ort::Env por instancia es razonable para esta app (un único
-    // modelo activo a la vez); si en el futuro hiciera falta compartir
-    // el entorno entre varias sesiones, se extraería a un singleton.
     Ort::Env env{ORT_LOGGING_LEVEL_WARNING, "ascii_image_converter"};
     std::unique_ptr<Ort::Session> session;
     Ort::AllocatorWithDefaultOptions allocator;
@@ -25,10 +24,13 @@ OnnxRuntimeManager::~OnnxRuntimeManager() = default;
 
 OnnxResult OnnxRuntimeManager::loadModel(const QString& modelPath) {
     OnnxResult result;
+    QElapsedTimer timer;
+    timer.start();
 
     const QFileInfo info(modelPath);
     if (!info.exists() || !info.isFile()) {
         result.errorMessage = QObject::tr("El modelo ONNX no existe: %1").arg(modelPath);
+        qCDebug(lcMl) << "Modelo no encontrado (eliminación de fondo no disponible):" << modelPath;
         return result;
     }
 
@@ -36,10 +38,6 @@ OnnxResult OnnxRuntimeManager::loadModel(const QString& modelPath) {
         Ort::SessionOptions options;
         options.SetIntraOpNumThreads(1);
         options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
-        // Proveedor CPU por defecto (Sección 3). Si más adelante se añade
-        // soporte GPU opcional, se intentaría un provider adicional aquí
-        // (p. ej. CUDA/DirectML) con fallback silencioso a CPU si no está
-        // disponible — sin cambiar la interfaz pública de esta clase.
 
 #ifdef _WIN32
         const std::wstring pathNative = modelPath.toStdWString();
@@ -54,10 +52,13 @@ OnnxResult OnnxRuntimeManager::loadModel(const QString& modelPath) {
         m_impl->outputName = outputNamePtr.get();
 
         result.success = true;
+        qCDebug(lcMl) << "Modelo ONNX cargado:" << info.fileName() << "en" << timer.elapsed()
+                      << "ms";
     } catch (const Ort::Exception& e) {
         m_impl->session.reset();
         result.errorMessage = QObject::tr("No se pudo cargar el modelo ONNX: %1")
             .arg(QString::fromUtf8(e.what()));
+        qCWarning(lcMl) << "Error cargando modelo ONNX:" << result.errorMessage;
     }
 
     return result;
@@ -75,6 +76,9 @@ OnnxRuntimeManager::InferenceOutput OnnxRuntimeManager::run(
         output.errorMessage = QObject::tr("No hay ningún modelo ONNX cargado.");
         return output;
     }
+
+    QElapsedTimer timer;
+    timer.start();
 
     try {
         Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
@@ -98,9 +102,12 @@ OnnxRuntimeManager::InferenceOutput OnnxRuntimeManager::run(
         output.values.assign(data, data + count);
 
         output.success = true;
+        qCDebug(lcMl) << "Inferencia ONNX completada en" << timer.elapsed() << "ms" << "(" << count
+                      << "valores de salida )";
     } catch (const Ort::Exception& e) {
         output.errorMessage = QObject::tr("Error durante la inferencia ONNX: %1")
             .arg(QString::fromUtf8(e.what()));
+        qCWarning(lcMl) << "Error de inferencia ONNX:" << output.errorMessage;
     }
 
     return output;

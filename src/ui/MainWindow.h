@@ -6,12 +6,13 @@
 
 class QLabel;
 class QPushButton;
+class QToolButton;
 class QImage;
 
 namespace ascii_converter::platform {
 class BrowserService;
 class ClipboardService;
-}
+}  // namespace ascii_converter::platform
 
 namespace ascii_converter::application {
 class ApplicationController;
@@ -23,12 +24,8 @@ class DropZone;
 class AsciiPreview;
 class ControlsPanel;
 
-// MainWindow SOLO coordina la interfaz (Sección 8). No incluye OpenCV en
-// ningún momento: delega en application::ApplicationController, que es
-// quien conoce image::ImageLoader/ImageValidator/ascii::AsciiEngine.
-// export::TextExporter/ImageExporter y platform::ClipboardService no usan
-// OpenCV, así que MainWindow los usa directamente (regla de dependencia
-// documentada en ARCHITECTURE.md: ui/ puede depender de export/).
+// Coordina la interfaz y delega el procesamiento en
+// application::ApplicationController.
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -47,16 +44,17 @@ private slots:
     void onExportTxtClicked();
     void onExportPngClicked();
     void onGithubIconClicked();
-    void onLanguageButtonClicked();
+    void switchLanguage(const QString& languageCode);
 
 private:
     void setupUi();
     void applyDarkTheme();
     void retranslateUi();
 
-    // Internacionalización (Fase 6, Sección 18/32).
+    // Internacionalización.
     void loadSavedLanguage();
     bool installEnglishTranslator();
+    void updateLanguageButtonsState();
 
     DropZone* m_dropZone = nullptr;
     AsciiPreview* m_asciiPreview = nullptr;
@@ -64,8 +62,9 @@ private:
     QLabel* m_titleLabel = nullptr;
     QLabel* m_statusLabel = nullptr;
     QPushButton* m_openButton = nullptr;
-    QPushButton* m_githubButton = nullptr;
-    QPushButton* m_languageButton = nullptr;
+    QToolButton* m_githubButton = nullptr;
+    QToolButton* m_flagEsButton = nullptr;
+    QToolButton* m_flagEnButton = nullptr;
     QPushButton* m_copyButton = nullptr;
     QPushButton* m_exportTxtButton = nullptr;
     QPushButton* m_exportPngButton = nullptr;
@@ -83,4 +82,4 @@ private:
     std::unique_ptr<application::ApplicationController> m_controller;
 };
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

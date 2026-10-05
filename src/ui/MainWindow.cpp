@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget* parent)
     , m_controller(std::make_unique<application::ApplicationController>(this)) {
     // Debe cargarse ANTES de setupUi(): si el idioma guardado es inglés,
     // el traductor tiene que estar instalado antes de que se evalúen los
-    // primeros tr() al construir los widgets (Sección 18).
+    // primeros tr() al construir los widgets.
     loadSavedLanguage();
     setupUi();
     applyDarkTheme();
@@ -45,7 +45,7 @@ MainWindow::~MainWindow() = default;
 void MainWindow::setupUi() {
     setWindowTitle(tr("ASCII Image Converter"));
 
-    // Sección 5: ventana de tamaño FIJO. No redimensionable, no maximizable.
+    // Ventana de tamaño FIJO: no redimensionable, no maximizable.
     setFixedSize(kWindowWidth, kWindowHeight);
     setWindowFlag(Qt::WindowMaximizeButtonHint, false);
 
@@ -54,7 +54,6 @@ void MainWindow::setupUi() {
     rootLayout->setContentsMargins(28, 16, 28, 8);
     rootLayout->setSpacing(12);
 
-    // --- Título ---
     m_titleLabel = new QLabel(tr("ASCII IMAGE CONVERTER"), central);
     QFont titleFont = m_titleLabel->font();
     titleFont.setPointSize(15);
@@ -64,7 +63,6 @@ void MainWindow::setupUi() {
     m_titleLabel->setAlignment(Qt::AlignHCenter);
     rootLayout->addWidget(m_titleLabel);
 
-    // --- Fila central: imagen original | resultado ASCII (Sección 15) ---
     m_dropZone = new DropZone(central);
     connect(m_dropZone, &DropZone::fileAccepted, this, &MainWindow::onFileAccepted);
     connect(m_dropZone, &DropZone::fileRejected, this, &MainWindow::onFileRejected);
@@ -85,7 +83,6 @@ void MainWindow::setupUi() {
     previewRow->addWidget(m_asciiPreview, /*stretch=*/1);
     rootLayout->addLayout(previewRow, /*stretch=*/1);
 
-    // --- Controles: contraste, brillo, resolución, eliminar fondo (Sección 9, 11, 14) ---
     m_controlsPanel = new ControlsPanel(central);
     m_controlsPanel->setEnabled(false); // No tiene sentido hasta que haya imagen.
     connect(m_controlsPanel, &ControlsPanel::paramsChanged,
@@ -94,7 +91,6 @@ void MainWindow::setupUi() {
             m_controller.get(), &application::ApplicationController::setBackgroundRemovalEnabled);
     rootLayout->addWidget(m_controlsPanel);
 
-    // --- Botones de acción: abrir, copiar, exportar (Sección 6, 16) ---
     m_openButton = new QPushButton(tr("Abrir imagen"), central);
     connect(m_openButton, &QPushButton::clicked, m_dropZone, &DropZone::openFileDialog);
 
@@ -120,27 +116,42 @@ void MainWindow::setupUi() {
     openButtonRow->addStretch();
     rootLayout->addLayout(openButtonRow);
 
-    // --- Barra inferior: GitHub (izquierda) + idioma (derecha), Sección 17/18 ---
     auto* bottomBar = new QHBoxLayout();
 
-    m_githubButton = new QPushButton(tr("GitHub"), central);
-    m_githubButton->setFlat(true);
+    m_githubButton = new QToolButton(central);
+    m_githubButton->setIcon(QIcon(QStringLiteral(":/icons/github.png")));
+    m_githubButton->setIconSize(QSize(22, 22));
+    m_githubButton->setAutoRaise(true);
     m_githubButton->setCursor(Qt::PointingHandCursor);
     m_githubButton->setToolTip(QString::fromLatin1(GITHUB_PROFILE_URL));
-    connect(m_githubButton, &QPushButton::clicked, this, &MainWindow::onGithubIconClicked);
+    connect(m_githubButton, &QToolButton::clicked, this, &MainWindow::onGithubIconClicked);
 
-    m_languageButton = new QPushButton(tr("Español / English"), central);
-    m_languageButton->setFlat(true);
-    m_languageButton->setCursor(Qt::PointingHandCursor);
-    m_languageButton->setToolTip(tr("Cambiar entre español e inglés"));
-    connect(m_languageButton, &QPushButton::clicked, this, &MainWindow::onLanguageButtonClicked);
+    m_flagEsButton = new QToolButton(central);
+    m_flagEsButton->setIcon(QIcon(QStringLiteral(":/icons/flag_es.png")));
+    m_flagEsButton->setIconSize(QSize(24, 16));
+    m_flagEsButton->setAutoRaise(true);
+    m_flagEsButton->setCursor(Qt::PointingHandCursor);
+    m_flagEsButton->setToolTip(tr("Español"));
+    connect(m_flagEsButton, &QToolButton::clicked, this,
+            [this]() { switchLanguage(QStringLiteral("es")); });
+
+    m_flagEnButton = new QToolButton(central);
+    m_flagEnButton->setIcon(QIcon(QStringLiteral(":/icons/flag_en.png")));
+    m_flagEnButton->setIconSize(QSize(24, 16));
+    m_flagEnButton->setAutoRaise(true);
+    m_flagEnButton->setCursor(Qt::PointingHandCursor);
+    m_flagEnButton->setToolTip(tr("English"));
+    connect(m_flagEnButton, &QToolButton::clicked, this,
+            [this]() { switchLanguage(QStringLiteral("en")); });
 
     bottomBar->addWidget(m_githubButton);
     bottomBar->addStretch();
-    bottomBar->addWidget(m_languageButton);
+    bottomBar->addWidget(m_flagEsButton);
+    bottomBar->addWidget(m_flagEnButton);
     rootLayout->addLayout(bottomBar);
 
     setCentralWidget(central);
+    updateLanguageButtonsState();
 
     m_statusLabel = new QLabel(tr("Listo."), this);
     statusBar()->addWidget(m_statusLabel);
@@ -148,7 +159,7 @@ void MainWindow::setupUi() {
 }
 
 void MainWindow::applyDarkTheme() {
-    // Sección 30: tema oscuro, minimalista, sin colores chillones.
+    // Tema oscuro, minimalista, sin colores chillones.
     QPalette palette;
     palette.setColor(QPalette::Window, QColor("#15171A"));
     palette.setColor(QPalette::WindowText, QColor("#E6E8EA"));
@@ -258,8 +269,12 @@ void MainWindow::onGithubIconClicked() {
     m_browserService->openUrl(QString::fromLatin1(GITHUB_PROFILE_URL));
 }
 
-void MainWindow::onLanguageButtonClicked() {
-    if (m_currentLanguage == QStringLiteral("es")) {
+void MainWindow::switchLanguage(const QString& languageCode) {
+    if (languageCode == m_currentLanguage) {
+        return;  // Ya está en ese idioma.
+    }
+
+    if (languageCode == QStringLiteral("en")) {
         if (!installEnglishTranslator()) {
             m_statusLabel->setText(tr("No se pudo cargar el idioma inglés."));
             return;
@@ -274,6 +289,7 @@ void MainWindow::onLanguageButtonClicked() {
     settings.setValue(QLatin1String(settings_keys::kLanguage), m_currentLanguage);
 
     retranslateUi();
+    updateLanguageButtonsState();
 }
 
 void MainWindow::loadSavedLanguage() {
@@ -301,6 +317,14 @@ bool MainWindow::installEnglishTranslator() {
     return QApplication::installTranslator(&m_translator);
 }
 
+void MainWindow::updateLanguageButtonsState() {
+    // El idioma activo se muestra deshabilitado (como "ya estás aquí");
+    // el otro queda pulsable para cambiar.
+    const bool isSpanish = (m_currentLanguage == QStringLiteral("es"));
+    m_flagEsButton->setEnabled(!isSpanish);
+    m_flagEnButton->setEnabled(isSpanish);
+}
+
 void MainWindow::retranslateUi() {
     setWindowTitle(tr("ASCII Image Converter"));
     m_titleLabel->setText(tr("ASCII IMAGE CONVERTER"));
@@ -308,9 +332,8 @@ void MainWindow::retranslateUi() {
     m_copyButton->setText(tr("Copiar ASCII"));
     m_exportTxtButton->setText(tr("Exportar TXT"));
     m_exportPngButton->setText(tr("Exportar PNG"));
-    m_githubButton->setText(tr("GitHub"));
-    m_languageButton->setText(tr("Español / English"));
-    m_languageButton->setToolTip(tr("Cambiar entre español e inglés"));
+    m_flagEsButton->setToolTip(tr("Español"));
+    m_flagEnButton->setToolTip(tr("English"));
 
     m_dropZone->retranslateUi();
     m_asciiPreview->retranslateUi();

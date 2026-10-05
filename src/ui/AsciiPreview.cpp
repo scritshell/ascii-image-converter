@@ -9,8 +9,7 @@
 
 namespace ascii_converter::ui {
 
-AsciiPreview::AsciiPreview(QWidget* parent)
-    : QWidget(parent) {
+AsciiPreview::AsciiPreview(QWidget* parent) : QWidget(parent) {
     setMinimumSize(420, 300);
 
     auto* layout = new QVBoxLayout(this);
@@ -68,9 +67,9 @@ void AsciiPreview::updateFontSize() {
 
     QFont font = m_textLabel->font();
 
-    // Sección 15: "la interfaz debe evitar textos que se salgan de la
-    // ventana". Empezamos por un tamaño generoso y reducimos hasta que
-    // quepa tanto en ancho como en alto dentro del widget disponible.
+    // El texto nunca debe salirse de la ventana: empezamos por un tamaño
+    // generoso y reducimos hasta que quepa tanto en ancho como en alto
+    // dentro del widget disponible.
     int pointSize = 28;
     for (; pointSize > 1; --pointSize) {
         font.setPointSize(pointSize);
@@ -86,4 +85,4 @@ void AsciiPreview::updateFontSize() {
     m_textLabel->setFont(font);
 }
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

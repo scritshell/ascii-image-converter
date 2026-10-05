@@ -5,9 +5,7 @@
 
 namespace ascii_converter::ascii {
 
-CharacterRamp::CharacterRamp(QString characters)
-    : m_characters(std::move(characters)) {
-}
+CharacterRamp::CharacterRamp(QString characters) : m_characters(std::move(characters)) {}
 
 QChar CharacterRamp::characterForLuminance(int luminance) const {
     if (m_characters.isEmpty()) {
@@ -18,7 +16,7 @@ QChar CharacterRamp::characterForLuminance(int luminance) const {
     const int lastIndex = m_characters.size() - 1;
 
     // luminancia baja (oscuro) -> índice bajo -> carácter denso ('@').
-    // luminancia alta (claro)  -> índice alto -> carácter disperso ('.').
+    // luminancia alta (claro) -> índice alto -> carácter disperso ('.').
     const int index = static_cast<int>(std::lround((clampedLuminance / 255.0) * lastIndex));
     return m_characters.at(std::clamp(index, 0, lastIndex));
 }
@@ -40,7 +38,7 @@ CharacterRamp CharacterRamp::dense() {
 }
 
 CharacterRamp CharacterRamp::blocks() {
-    return CharacterRamp(QStringLiteral("\u2588\u2593\u2592\u2591")); // █▓▒░
+    return CharacterRamp(QStringLiteral("\u2588\u2593\u2592\u2591"));  // █▓▒░
 }
 
-} // namespace ascii_converter::ascii
+}  // namespace ascii_converter::ascii

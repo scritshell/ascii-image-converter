@@ -6,7 +6,7 @@ namespace ascii_converter::platform {
 
 // Envoltorio fino y testeable sobre QDesktopServices. Ninguna clase de UI
 // llama directamente a APIs de plataforma: siempre pasa por aquí, lo que
-// permite sustituirlo por un mock en tests (Sección 26).
+// permite sustituirlo por un mock en tests.
 class BrowserService {
 public:
     virtual ~BrowserService() = default;
@@ -16,4 +16,4 @@ public:
     virtual bool openUrl(const QString& url) const;
 };
 
-} // namespace ascii_converter::platform
+}  // namespace ascii_converter::platform

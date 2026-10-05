@@ -1,4 +1,5 @@
 #include "export/ImageExporter.h"
+#include "application/Logging.h"
 
 #include <QFont>
 #include <QFontMetrics>
@@ -63,7 +64,13 @@ bool ImageExporter::saveToFile(const QImage& image, const QString& filePath) con
     if (image.isNull() || filePath.isEmpty()) {
         return false;
     }
-    return image.save(filePath, "PNG");
+    const bool ok = image.save(filePath, "PNG");
+    if (!ok) {
+        qCWarning(lcExport) << "No se pudo guardar el PNG exportado:" << filePath;
+    } else {
+        qCDebug(lcExport) << "PNG exportado:" << filePath << image.size();
+    }
+    return ok;
 }
 
-} // namespace ascii_converter::exporting
+}  // namespace ascii_converter::exporting

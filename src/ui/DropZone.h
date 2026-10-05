@@ -10,12 +10,12 @@ namespace ascii_converter::ui {
 
 class ImagePreview;
 
-// Zona de drag & drop (Sección 6). Responsabilidad única: UX de arrastrar y
+// Zona de drag & drop. Responsabilidad única: UX de arrastrar y
 // soltar una imagen, validar la extensión, avisar mediante una señal, y
 // mostrar la imagen ya cargada (delegando el renderizado a ImagePreview)
 // sin dejar de aceptar un nuevo archivo arrastrado que la reemplace.
 // NO decodifica la imagen: eso es responsabilidad de image::ImageLoader,
-// orquestado por application::ApplicationController (Fase 2).
+// orquestado por application::ApplicationController.
 class DropZone : public QFrame {
     Q_OBJECT
 
@@ -26,7 +26,7 @@ public:
     void clearLoadedImage();
 
     // Re-aplica tr() al texto de instrucción tras un cambio de idioma en
-    // caliente (Fase 6). Seguro de llamar incluso si el label está
+    // caliente. Seguro de llamar incluso si el label está
     // oculto en ese momento (solo actualiza el texto subyacente).
     void retranslateUi();
 
@@ -55,4 +55,4 @@ private:
     ImagePreview* m_preview = nullptr;
 };
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

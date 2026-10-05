@@ -11,4 +11,4 @@ void ClipboardService::setText(const QString& text) const {
     }
 }
 
-} // namespace ascii_converter::platform
+}  // namespace ascii_converter::platform

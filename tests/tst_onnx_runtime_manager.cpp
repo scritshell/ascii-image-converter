@@ -13,7 +13,7 @@ QString fixturePath(const QString& name) {
     // directorio de trabajo desde el que se ejecute el test.
     return QStringLiteral(TEST_FIXTURES_DIR) + QLatin1Char('/') + name;
 }
-} // namespace
+}  // namespace
 
 class TstOnnxRuntimeManager : public QObject {
     Q_OBJECT

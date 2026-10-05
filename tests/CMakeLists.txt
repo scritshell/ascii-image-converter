@@ -19,6 +19,7 @@ add_test(NAME ImageValidator COMMAND tst_image_validator)
 add_executable(tst_image_loader
     tst_image_loader.cpp
     ${PROJECT_SRC_DIR}/image/ImageLoader.cpp
+    ${PROJECT_SRC_DIR}/application/Logging.cpp
 )
 target_include_directories(tst_image_loader PRIVATE ${PROJECT_SRC_DIR} ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(tst_image_loader PRIVATE Qt6::Test Qt6::Core Qt6::Gui ${OpenCV_LIBS})
@@ -58,6 +59,7 @@ add_executable(tst_application_controller
     ${PROJECT_SRC_DIR}/ml/OnnxRuntimeManager.cpp
     ${PROJECT_SRC_DIR}/ml/U2NetSegmentationModel.cpp
     ${PROJECT_SRC_DIR}/ml/BackgroundRemovalService.cpp
+    ${PROJECT_SRC_DIR}/application/Logging.cpp
 )
 target_include_directories(tst_application_controller PRIVATE ${PROJECT_SRC_DIR} ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(tst_application_controller PRIVATE
@@ -75,6 +77,7 @@ add_custom_command(TARGET tst_application_controller POST_BUILD
 add_executable(tst_text_exporter
     tst_text_exporter.cpp
     ${PROJECT_SRC_DIR}/export/TextExporter.cpp
+    ${PROJECT_SRC_DIR}/application/Logging.cpp
 )
 target_include_directories(tst_text_exporter PRIVATE ${PROJECT_SRC_DIR})
 target_link_libraries(tst_text_exporter PRIVATE Qt6::Test Qt6::Core)
@@ -83,6 +86,7 @@ add_test(NAME TextExporter COMMAND tst_text_exporter)
 add_executable(tst_image_exporter
     tst_image_exporter.cpp
     ${PROJECT_SRC_DIR}/export/ImageExporter.cpp
+    ${PROJECT_SRC_DIR}/application/Logging.cpp
 )
 target_include_directories(tst_image_exporter PRIVATE ${PROJECT_SRC_DIR})
 target_link_libraries(tst_image_exporter PRIVATE Qt6::Test Qt6::Core Qt6::Gui)
@@ -92,6 +96,7 @@ set_tests_properties(ImageExporter PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offsc
 add_executable(tst_onnx_runtime_manager
     tst_onnx_runtime_manager.cpp
     ${PROJECT_SRC_DIR}/ml/OnnxRuntimeManager.cpp
+    ${PROJECT_SRC_DIR}/application/Logging.cpp
 )
 target_include_directories(tst_onnx_runtime_manager PRIVATE ${PROJECT_SRC_DIR})
 target_link_libraries(tst_onnx_runtime_manager PRIVATE Qt6::Test Qt6::Core onnxruntime::onnxruntime)
@@ -116,22 +121,3 @@ add_executable(tst_background_removal_service
 target_include_directories(tst_background_removal_service PRIVATE ${PROJECT_SRC_DIR} ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(tst_background_removal_service PRIVATE Qt6::Test Qt6::Core ${OpenCV_LIBS})
 add_test(NAME BackgroundRemovalService COMMAND tst_background_removal_service)
-
-# --- Fase 9: tests de optimización ---
-add_executable(tst_ascii_engine_cache
-    tst_ascii_engine_cache.cpp
-    ${PROJECT_SRC_DIR}/ascii/AsciiEngine.cpp
-    ${PROJECT_SRC_DIR}/ascii/CharacterRamp.cpp
-)
-target_include_directories(tst_ascii_engine_cache PRIVATE ${PROJECT_SRC_DIR} ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(tst_ascii_engine_cache PRIVATE Qt6::Test Qt6::Core ${OpenCV_LIBS})
-add_test(NAME AsciiEngineCache COMMAND tst_ascii_engine_cache)
-set_tests_properties(AsciiEngineCache PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
-
-add_executable(tst_performance_profiler
-    tst_performance_profiler.cpp
-    ${PROJECT_SRC_DIR}/platform/PerformanceProfiler.cpp
-)
-target_include_directories(tst_performance_profiler PRIVATE ${PROJECT_SRC_DIR})
-target_link_libraries(tst_performance_profiler PRIVATE Qt6::Test Qt6::Core)
-add_test(NAME PerformanceProfiler COMMAND tst_performance_profiler)

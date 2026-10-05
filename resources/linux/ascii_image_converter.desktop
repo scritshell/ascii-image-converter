@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ASCII Image Converter
+Comment=Convierte imágenes en arte ASCII
+Exec=ascii_image_converter
+Icon=ascii_image_converter
+Categories=Graphics;Utility;
+Terminal=false

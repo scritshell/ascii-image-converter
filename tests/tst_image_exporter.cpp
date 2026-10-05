@@ -70,7 +70,7 @@ void TstImageExporter::backgroundColorIsApplied() {
     ImageExporter exporter;
     ImageExporter::RenderOptions options;
     options.backgroundColor = Qt::red;
-    options.paddingPx = 30; // Margen grande para asegurar una esquina sin texto.
+    options.paddingPx = 30;  // Margen grande para asegurar una esquina sin texto.
 
     const QImage image = exporter.render(QStringLiteral("@"), options);
     QVERIFY(!image.isNull());

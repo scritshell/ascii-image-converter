@@ -68,7 +68,7 @@ void TstTextExporter::emptyFilePathFails() {
 
 void TstTextExporter::unwritablePathFailsWithoutCrashing() {
     // Un subdirectorio que no existe: QSaveFile no crea directorios
-    // padre, así que esto debe fallar limpiamente (Sección 24).
+    // padre, así que esto debe fallar limpiamente.
     const QString path = m_tempDir->filePath("no_existe/out.txt");
     TextExporter exporter;
     QVERIFY(!exporter.saveToFile(QStringLiteral("contenido"), path));

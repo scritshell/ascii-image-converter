@@ -7,7 +7,7 @@ class QLabel;
 
 namespace ascii_converter::ui {
 
-// Muestra el resultado ASCII con fuente monoespaciada (Sección 15). El
+// Muestra el resultado ASCII con fuente monoespaciada. El
 // tamaño de fuente se recalcula al cambiar el texto o al redimensionar,
 // para que el resultado nunca se salga del widget — no conoce OpenCV ni
 // el motor ASCII, solo pinta el QString que se le entrega.
@@ -21,7 +21,7 @@ public:
     void clear();
 
     // Re-aplica tr() al texto de placeholder tras un cambio de idioma en
-    // caliente (Fase 6). No toca el ASCII ya generado (no es texto de
+    // caliente. No toca el ASCII ya generado (no es texto de
     // interfaz, es contenido del usuario).
     void retranslateUi();
 
@@ -35,4 +35,4 @@ private:
     QString m_currentText;
 };
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

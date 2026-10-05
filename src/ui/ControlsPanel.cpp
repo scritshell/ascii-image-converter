@@ -11,7 +11,7 @@ namespace ascii_converter::ui {
 
 namespace {
 constexpr int kContrastSliderMin = 0;
-constexpr int kContrastSliderMax = 200; // 0 -> 0.0x, 100 -> 1.0x (neutro), 200 -> 2.0x
+constexpr int kContrastSliderMax = 200;  // 0 -> 0.0x, 100 -> 1.0x (neutro), 200 -> 2.0x
 constexpr int kContrastSliderDefault = 100;
 
 constexpr int kBrightnessSliderMin = -100;
@@ -25,10 +25,9 @@ double contrastFromSlider(int value) {
 double brightnessFromSlider(int value) {
     return static_cast<double>(value);
 }
-} // namespace
+}  // namespace
 
-ControlsPanel::ControlsPanel(QWidget* parent)
-    : QWidget(parent) {
+ControlsPanel::ControlsPanel(QWidget* parent) : QWidget(parent) {
     setupUi();
 }
 
@@ -37,7 +36,6 @@ void ControlsPanel::setupUi() {
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(8);
 
-    // --- Contraste (Sección 11) ---
     auto* contrastRow = new QHBoxLayout();
     m_contrastSlider = new QSlider(Qt::Horizontal, this);
     m_contrastSlider->setRange(kContrastSliderMin, kContrastSliderMax);
@@ -49,7 +47,6 @@ void ControlsPanel::setupUi() {
     m_contrastRowLabel = new QLabel(tr("Contraste"), this);
     layout->addRow(m_contrastRowLabel, contrastRow);
 
-    // --- Brillo (Sección 11) ---
     auto* brightnessRow = new QHBoxLayout();
     m_brightnessSlider = new QSlider(Qt::Horizontal, this);
     m_brightnessSlider->setRange(kBrightnessSliderMin, kBrightnessSliderMax);
@@ -61,7 +58,6 @@ void ControlsPanel::setupUi() {
     m_brightnessRowLabel = new QLabel(tr("Brillo"), this);
     layout->addRow(m_brightnessRowLabel, brightnessRow);
 
-    // --- Resolución: solo ancho, el alto es automático (Sección 14) ---
     m_widthCombo = new QComboBox(this);
     const QList<int> widths = {40, 60, 80, 100, 120, 160, 200};
     for (const int w : widths) {
@@ -71,23 +67,22 @@ void ControlsPanel::setupUi() {
     m_widthRowLabel = new QLabel(tr("Resolución (ancho)"), this);
     layout->addRow(m_widthRowLabel, m_widthCombo);
 
-    // --- Eliminación de fondo (Sección 9): toggle on/off ---
     m_backgroundRemovalCheckbox = new QCheckBox(tr("Eliminar fondo (IA)"), this);
     layout->addRow(m_backgroundRemovalCheckbox);
-    connect(m_backgroundRemovalCheckbox, &QCheckBox::toggled,
-            this, &ControlsPanel::backgroundRemovalToggled);
+    connect(m_backgroundRemovalCheckbox, &QCheckBox::toggled, this,
+            &ControlsPanel::backgroundRemovalToggled);
 
     connect(m_contrastSlider, &QSlider::valueChanged, this, [this](int value) {
-        m_contrastValueLabel->setText(QStringLiteral("%1x").arg(contrastFromSlider(value), 0, 'f', 2));
+        m_contrastValueLabel->setText(
+            QStringLiteral("%1x").arg(contrastFromSlider(value), 0, 'f', 2));
         emitParamsChanged();
     });
     connect(m_brightnessSlider, &QSlider::valueChanged, this, [this](int value) {
         m_brightnessValueLabel->setText(QString::number(value));
         emitParamsChanged();
     });
-    connect(m_widthCombo, &QComboBox::currentIndexChanged, this, [this](int) {
-        emitParamsChanged();
-    });
+    connect(m_widthCombo, &QComboBox::currentIndexChanged, this,
+            [this](int) { emitParamsChanged(); });
 }
 
 ascii::AsciiParams ControlsPanel::currentParams() const {
@@ -95,9 +90,6 @@ ascii::AsciiParams ControlsPanel::currentParams() const {
     params.contrast = contrastFromSlider(m_contrastSlider->value());
     params.brightness = brightnessFromSlider(m_brightnessSlider->value());
     params.targetWidthChars = m_widthCombo->currentData().toInt();
-    // aspectCorrectionFactor y ramp se quedan en su valor por defecto:
-    // Sección 39 pide un motor sofisticado por dentro pero una UI simple
-    // por fuera — no exponemos estos dos como controles en la Fase 4.
     return params;
 }
 
@@ -112,4 +104,4 @@ void ControlsPanel::retranslateUi() {
     m_backgroundRemovalCheckbox->setText(tr("Eliminar fondo (IA)"));
 }
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

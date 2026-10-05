@@ -9,7 +9,7 @@ namespace ascii_converter::ui {
 
 // Muestra una imagen ya decodificada (QImage), escalada y centrada,
 // manteniendo proporciones. No conoce OpenCV ni rutas de archivo: solo
-// pinta lo que se le entrega (Sección 19, separación de responsabilidades).
+// pinta lo que se le entrega.
 class ImagePreview : public QWidget {
     Q_OBJECT
 
@@ -30,4 +30,4 @@ private:
     QImage m_sourceImage;
 };
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

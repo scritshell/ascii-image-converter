@@ -11,4 +11,4 @@ namespace ascii_converter::image {
 // no está soportado.
 QImage matToQImage(const cv::Mat& mat);
 
-} // namespace ascii_converter::image
+}  // namespace ascii_converter::image

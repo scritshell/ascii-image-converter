@@ -9,8 +9,7 @@
 
 namespace ascii_converter::ui {
 
-ImagePreview::ImagePreview(QWidget* parent)
-    : QWidget(parent) {
+ImagePreview::ImagePreview(QWidget* parent) : QWidget(parent) {
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     // Sin setAlignment() aquí a propósito: el layout debe OCUPAR todo el
@@ -56,8 +55,8 @@ void ImagePreview::updateScaledPixmap() {
     }
 
     const QPixmap scaled = QPixmap::fromImage(m_sourceImage)
-        .scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                               .scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_imageLabel->setPixmap(scaled);
 }
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

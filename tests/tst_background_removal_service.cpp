@@ -32,7 +32,7 @@ public:
     }
 };
 
-} // namespace
+}  // namespace
 
 class TstBackgroundRemovalService : public QObject {
     Q_OBJECT
@@ -67,7 +67,7 @@ void TstBackgroundRemovalService::fallsBackWhenNoModelProvided() {
 
 void TstBackgroundRemovalService::keepsLeftHalfAndWhitensRightHalfOnSuccess() {
     BackgroundRemovalService service(std::make_unique<FakeSuccessModel>());
-    const cv::Mat source(10, 10, CV_8UC3, cv::Scalar(10, 20, 30)); // BGR
+    const cv::Mat source(10, 10, CV_8UC3, cv::Scalar(10, 20, 30));  // BGR
 
     const auto result = service.removeBackground(source);
 
@@ -93,7 +93,7 @@ void TstBackgroundRemovalService::emptyImageDoesNotCrash() {
     BackgroundRemovalService service(std::make_unique<FakeSuccessModel>());
     const auto result = service.removeBackground(cv::Mat());
 
-    // Lo importante (Sección 24): no crashea. La imagen vacía se detecta
+    // Lo importante: no crashea. La imagen vacía se detecta
     // antes de llamar al modelo, así que cae directamente al fallback.
     QVERIFY(!result.usedSegmentation);
     QVERIFY(result.image.empty());

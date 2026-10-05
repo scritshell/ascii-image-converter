@@ -53,22 +53,18 @@ LoadOutcome loadAndValidate(const QString& filePath) {
     return outcome;
 }
 
-} // namespace
+}  // namespace
 
-ApplicationController::ApplicationController(QObject* parent)
-    : QObject(parent) {
+ApplicationController::ApplicationController(QObject* parent) : QObject(parent) {
     m_asciiDebounceTimer.setSingleShot(true);
-    m_asciiDebounceTimer.setInterval(120); // Sección 27: debounce de sliders.
-    connect(&m_asciiDebounceTimer, &QTimer::timeout, this, &ApplicationController::regenerateAsciiNow);
+    m_asciiDebounceTimer.setInterval(120);  // Debounce de sliders.
+    connect(&m_asciiDebounceTimer, &QTimer::timeout, this,
+            &ApplicationController::regenerateAsciiNow);
 
-    const QString modelPath = QCoreApplication::applicationDirPath()
-        + QLatin1String(kSegmentationModelRelativePath);
+    const QString modelPath =
+        QCoreApplication::applicationDirPath() + QLatin1String(kSegmentationModelRelativePath);
     m_backgroundRemovalService = std::make_unique<ml::BackgroundRemovalService>(
         std::make_unique<ml::U2NetSegmentationModel>(modelPath));
-    // Si el modelo no está presente, U2NetSegmentationModel simplemente
-    // fallará al segmentar más adelante y BackgroundRemovalService caerá
-    // al fallback silencioso (Sección 9) — no hace falta comprobar nada
-    // aquí ni tratarlo como un error de arranque.
 }
 
 ApplicationController::~ApplicationController() = default;
@@ -85,7 +81,7 @@ void ApplicationController::loadImage(const QString& filePath) {
         }
 
         m_originalImage = outcome.decoded;
-        refreshProcessingImage(); // Aplica el estado actual de "eliminar fondo" y regenera.
+        refreshProcessingImage();  // Aplica el estado actual de "eliminar fondo" y regenera.
     });
 
     watcher->setFuture(QtConcurrent::run(loadAndValidate, filePath));
@@ -93,7 +89,7 @@ void ApplicationController::loadImage(const QString& filePath) {
 
 void ApplicationController::updateAsciiParams(const ascii::AsciiParams& params) {
     m_pendingParams = params;
-    m_asciiDebounceTimer.start(); // QTimer::start() reinicia el intervalo si ya corría.
+    m_asciiDebounceTimer.start();  // QTimer::start() reinicia el intervalo si ya corría.
 }
 
 void ApplicationController::setBackgroundRemovalEnabled(bool enabled) {
@@ -103,7 +99,7 @@ void ApplicationController::setBackgroundRemovalEnabled(bool enabled) {
 
 void ApplicationController::refreshProcessingImage() {
     if (m_originalImage.empty()) {
-        return; // Todavía no se ha cargado ninguna imagen.
+        return;  // Todavía no se ha cargado ninguna imagen.
     }
 
     if (!m_backgroundRemovalEnabled) {
@@ -113,26 +109,24 @@ void ApplicationController::refreshProcessingImage() {
         return;
     }
 
-    // Eliminación de fondo: operación de IA -> hilo en segundo plano
-    // (Sección 7), igual que la carga de imagen.
     auto* watcher = new QFutureWatcher<ml::BackgroundRemovalResult>(this);
-    connect(watcher, &QFutureWatcher<ml::BackgroundRemovalResult>::finished, this, [this, watcher]() {
-        const ml::BackgroundRemovalResult result = watcher->result();
-        watcher->deleteLater();
+    connect(watcher, &QFutureWatcher<ml::BackgroundRemovalResult>::finished, this,
+            [this, watcher]() {
+                const ml::BackgroundRemovalResult result = watcher->result();
+                watcher->deleteLater();
 
-        m_processingImage = result.image;
-        emit imageLoaded(image::matToQImage(m_processingImage));
-        if (!result.usedSegmentation) {
-            emit backgroundRemovalUnavailable(result.warning);
-        }
-        regenerateAsciiNow();
-    });
+                m_processingImage = result.image;
+                emit imageLoaded(image::matToQImage(m_processingImage));
+                if (!result.usedSegmentation) {
+                    emit backgroundRemovalUnavailable(result.warning);
+                }
+                regenerateAsciiNow();
+            });
 
     ml::BackgroundRemovalService* service = m_backgroundRemovalService.get();
-    const cv::Mat sourceCopy = m_originalImage.clone(); // Copia segura para cruzar hilos.
-    watcher->setFuture(QtConcurrent::run([service, sourceCopy]() {
-        return service->removeBackground(sourceCopy);
-    }));
+    const cv::Mat sourceView = m_originalImage;
+    watcher->setFuture(QtConcurrent::run(
+        [service, sourceView]() { return service->removeBackground(sourceView); }));
 }
 
 void ApplicationController::regenerateAsciiNow() {
@@ -143,4 +137,4 @@ void ApplicationController::regenerateAsciiNow() {
     emit asciiGenerated(engine.generate(m_processingImage));
 }
 
-} // namespace ascii_converter::application
+}  // namespace ascii_converter::application

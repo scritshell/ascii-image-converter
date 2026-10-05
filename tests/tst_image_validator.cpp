@@ -17,7 +17,7 @@ cv::Mat makeMatWithoutAllocating(int rows, int cols, int type) {
     const size_t step = static_cast<size_t>(cols) * channels;
     return cv::Mat(rows, cols, type, dummyBuffer, step);
 }
-} // namespace
+}  // namespace
 
 class TstImageValidator : public QObject {
     Q_OBJECT

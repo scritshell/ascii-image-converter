@@ -7,7 +7,7 @@
 namespace ascii_converter::ml {
 
 namespace {
-constexpr int kNetSize = 320; // U²-Net/U²-Netp esperan entradas fijas 320x320.
+constexpr int kNetSize = 320;  // U²-Net/U²-Netp esperan entradas fijas 320x320.
 }
 
 U2NetSegmentationModel::U2NetSegmentationModel(const QString& modelPath) {
@@ -26,7 +26,6 @@ SegmentationResult U2NetSegmentationModel::segment(const cv::Mat& bgrImage) cons
         return result;
     }
 
-    // --- Preprocesado: resize -> RGB -> [0,1] -> normalización ImageNet -> NCHW ---
     cv::Mat resized;
     cv::resize(bgrImage, resized, cv::Size(kNetSize, kNetSize), 0, 0, cv::INTER_AREA);
 
@@ -41,32 +40,28 @@ SegmentationResult U2NetSegmentationModel::segment(const cv::Mat& bgrImage) cons
     cv::divide(normalized, cv::Scalar(0.229, 0.224, 0.225), normalized);
 
     std::vector<cv::Mat> channels(3);
-    cv::split(normalized, channels); // Orden RGB, ya convertido arriba.
+    cv::split(normalized, channels);  // Orden RGB, ya convertido arriba.
 
     std::vector<float> inputData(static_cast<size_t>(3) * kNetSize * kNetSize);
     const size_t planeSize = static_cast<size_t>(kNetSize) * kNetSize;
     for (int c = 0; c < 3; ++c) {
-        std::memcpy(inputData.data() + static_cast<size_t>(c) * planeSize,
-                    channels[c].ptr<float>(), planeSize * sizeof(float));
+        std::memcpy(inputData.data() + static_cast<size_t>(c) * planeSize, channels[c].ptr<float>(),
+                    planeSize * sizeof(float));
     }
 
     const std::vector<int64_t> inputShape = {1, 3, kNetSize, kNetSize};
 
-    // --- Inferencia ---
     auto inference = m_manager.run(inputData, inputShape);
     if (!inference.success) {
         result.errorMessage = inference.errorMessage;
         return result;
     }
     if (inference.values.size() != planeSize) {
-        result.errorMessage = QObject::tr(
-            "El modelo ONNX devolvió una salida con forma inesperada.");
+        result.errorMessage =
+            QObject::tr("El modelo ONNX devolvió una salida con forma inesperada.");
         return result;
     }
 
-    // --- Postprocesado: la salida ya viene con sigmoide aplicada (según
-    // el propio grafo del modelo), en [0,1] -> escalar a [0,255] y
-    // volver al tamaño original de la imagen ---
     cv::Mat maskFloat(kNetSize, kNetSize, CV_32FC1, inference.values.data());
     cv::Mat maskResized;
     cv::resize(maskFloat, maskResized, bgrImage.size(), 0, 0, cv::INTER_LINEAR);
@@ -79,4 +74,4 @@ SegmentationResult U2NetSegmentationModel::segment(const cv::Mat& bgrImage) cons
     return result;
 }
 
-} // namespace ascii_converter::ml
+}  // namespace ascii_converter::ml

@@ -27,6 +27,16 @@ resources/models/*.onnx
 *.user
 CMakeUserPresets.json
 
+# Build/output
+AppDir/
+
+# Local ONNX Runtime SDK
+onnxruntime-linux-x64-1.19.2/
+onnxruntime.tgz
+
+# Packaging tools downloaded locally
+.packaging-tools/
+
 # Sistema
 .DS_Store
 Thumbs.db

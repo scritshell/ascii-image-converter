@@ -13,8 +13,7 @@
 
 namespace ascii_converter::ui {
 
-DropZone::DropZone(QWidget* parent)
-    : QFrame(parent) {
+DropZone::DropZone(QWidget* parent) : QFrame(parent) {
     setAcceptDrops(true);
     setFrameShape(QFrame::StyledPanel);
     setMinimumSize(420, 300);
@@ -56,8 +55,8 @@ void DropZone::retranslateUi() {
 
 void DropZone::openFileDialog() {
     const QString filter = tr("Imágenes (*.png *.jpg *.jpeg *.webp *.bmp)");
-    const QString filePath = QFileDialog::getOpenFileName(
-        this, tr("Abrir imagen"), QString(), filter);
+    const QString filePath =
+        QFileDialog::getOpenFileName(this, tr("Abrir imagen"), QString(), filter);
 
     if (filePath.isEmpty()) {
         return;
@@ -116,18 +115,17 @@ void DropZone::applyStyle(bool highlighted) {
     const QString border = highlighted ? QStringLiteral("#5CC8FF") : QStringLiteral("#3A3F44");
     const QString background = highlighted ? QStringLiteral("#232830") : QStringLiteral("#1B1E22");
 
-    setStyleSheet(QStringLiteral(
-        "QFrame {"
-        "  border: 2px dashed %1;"
-        "  border-radius: 12px;"
-        "  background-color: %2;"
-        "}"
-        "QLabel {"
-        "  color: #C7CCD1;"
-        "  font-size: 14px;"
-        "  border: none;"
-        "}"
-    ).arg(border, background));
+    setStyleSheet(QStringLiteral("QFrame {"
+                                 " border: 2px dashed %1;"
+                                 " border-radius: 12px;"
+                                 " background-color: %2;"
+                                 "}"
+                                 "QLabel {"
+                                 " color: #C7CCD1;"
+                                 " font-size: 14px;"
+                                 " border: none;"
+                                 "}")
+                      .arg(border, background));
 }
 
-} // namespace ascii_converter::ui
+}  // namespace ascii_converter::ui

@@ -7,8 +7,7 @@
 namespace ascii_converter::ml {
 
 BackgroundRemovalService::BackgroundRemovalService(std::unique_ptr<SegmentationModel> model)
-    : m_model(std::move(model)) {
-}
+    : m_model(std::move(model)) {}
 
 BackgroundRemovalService::~BackgroundRemovalService() = default;
 
@@ -23,7 +22,7 @@ BackgroundRemovalResult BackgroundRemovalService::removeBackground(const cv::Mat
 
     const SegmentationResult segmentation = m_model->segment(bgrImage);
     if (!segmentation.success) {
-        // Fallback silencioso a la imagen original (Sección 9): no se
+        // Fallback silencioso a la imagen original: no se
         // interrumpe el flujo del usuario por un fallo de la IA.
         result.image = bgrImage;
         result.warning = segmentation.errorMessage;
@@ -35,7 +34,7 @@ BackgroundRemovalResult BackgroundRemovalService::removeBackground(const cv::Mat
     // el fondo eliminado se convierte en luminancia máxima -> carácter
     // más disperso -> se lee como espacio vacío en el resultado ASCII
     // final, sin tener que enseñar a AsciiEngine a manejar un canal
-    // alfa (Sección 9, 10).
+    // alfa.
     cv::Mat foregroundFloat;
     bgrImage.convertTo(foregroundFloat, CV_32FC3);
 
@@ -64,4 +63,4 @@ BackgroundRemovalResult BackgroundRemovalService::removeBackground(const cv::Mat
     return result;
 }
 
-} // namespace ascii_converter::ml
+}  // namespace ascii_converter::ml

@@ -17,4 +17,4 @@ private:
     OnnxResult m_loadResult;
 };
 
-} // namespace ascii_converter::ml
+}  // namespace ascii_converter::ml

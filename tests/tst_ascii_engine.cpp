@@ -11,29 +11,28 @@ class TstAsciiEngine : public QObject {
     Q_OBJECT
 
 private slots:
-    // --- grayscale ---
     void grayscaleFromColorHasSameDimensions();
     void grayscaleOfEqualChannelsPreservesValue();
     void grayscaleOfEmptyMatIsEmpty();
 
-    // --- contraste/brillo ---
     void neutralContrastBrightnessIsUnchanged();
     void contrastMultipliesValue();
     void brightnessAddsOffset();
     void contrastBrightnessSaturatesAt255();
 
-    // --- aspect ratio ---
     void gridSizeAppliesAspectCorrection();
     void gridSizeHandlesInvalidInput();
 
-    // --- resize ---
     void resizeToGridProducesExactDimensions();
 
-    // --- character mapping / generación completa ---
     void generateOnSolidBlackImageUsesDensestCharacter();
     void generateOnSolidWhiteImageUsesSparsestCharacter();
     void generateProducesExpectedLineCount();
     void generateOnEmptyImageReturnsEmptyString();
+
+    void cacheIsInvalidatedWhenSourceImageChanges();
+    void cacheIsInvalidatedWhenWidthChanges();
+    void reusingCacheWithDifferentContrastStillProducesCorrectResult();
 };
 
 void TstAsciiEngine::grayscaleFromColorHasSameDimensions() {
@@ -45,10 +44,6 @@ void TstAsciiEngine::grayscaleFromColorHasSameDimensions() {
 }
 
 void TstAsciiEngine::grayscaleOfEqualChannelsPreservesValue() {
-    // Si B == G == R, la suma de los pesos BT.601 es exactamente 1.0, así
-    // que el gris resultante debe ser (casi) idéntico al valor original —
-    // esto nos da un caso determinista para testear sin depender de la
-    // fórmula de ponderación exacta.
     const cv::Mat color(10, 10, CV_8UC3, cv::Scalar(150, 150, 150));
     const cv::Mat gray = AsciiEngine::toGrayscale(color);
     QCOMPARE(static_cast<int>(gray.at<uchar>(5, 5)), 150);
@@ -79,7 +74,7 @@ void TstAsciiEngine::brightnessAddsOffset() {
 void TstAsciiEngine::contrastBrightnessSaturatesAt255() {
     const cv::Mat gray(5, 5, CV_8UC1, cv::Scalar(200));
     const cv::Mat result = AsciiEngine::applyContrastBrightness(gray, 2.0, 0.0);
-    QCOMPARE(static_cast<int>(result.at<uchar>(0, 0)), 255); // 400 saturado a 255
+    QCOMPARE(static_cast<int>(result.at<uchar>(0, 0)), 255);  // 400 saturado a 255
 }
 
 void TstAsciiEngine::gridSizeAppliesAspectCorrection() {
@@ -159,6 +154,62 @@ void TstAsciiEngine::generateProducesExpectedLineCount() {
 void TstAsciiEngine::generateOnEmptyImageReturnsEmptyString() {
     AsciiEngine engine;
     QVERIFY(engine.generate(cv::Mat()).isEmpty());
+}
+
+void TstAsciiEngine::cacheIsInvalidatedWhenSourceImageChanges() {
+    AsciiParams params;
+    params.targetWidthChars = 8;
+    AsciiEngine engine(params);  // Misma instancia para las dos llamadas -> ejercita el caché.
+
+    const cv::Mat black(50, 80, CV_8UC3, cv::Scalar(0, 0, 0));
+    const QString blackResult = engine.generate(black);
+    for (const QChar c : blackResult) {
+        if (c != QLatin1Char('\n')) {
+            QCOMPARE(c, params.ramp.characters().at(0));  // Carácter más denso.
+        }
+    }
+
+    const cv::Mat white(50, 80, CV_8UC3, cv::Scalar(255, 255, 255));
+    const QString whiteResult = engine.generate(white);
+    for (const QChar c : whiteResult) {
+        if (c != QLatin1Char('\n')) {
+            QCOMPARE(c, params.ramp.characters().at(params.ramp.size() - 1));  // Más disperso.
+        }
+    }
+}
+
+void TstAsciiEngine::cacheIsInvalidatedWhenWidthChanges() {
+    AsciiParams params;
+    params.targetWidthChars = 10;
+    AsciiEngine engine(params);
+
+    const cv::Mat image(100, 200, CV_8UC3, cv::Scalar(120, 120, 120));
+    const QString first = engine.generate(image);
+    QCOMPARE(first.split(QLatin1Char('\n')).first().size(), 10);
+
+    params.targetWidthChars = 20;
+    engine.setParams(params);
+    const QString second = engine.generate(image);
+    QCOMPARE(second.split(QLatin1Char('\n')).first().size(), 20);
+}
+
+void TstAsciiEngine::reusingCacheWithDifferentContrastStillProducesCorrectResult() {
+    AsciiParams params;
+    params.targetWidthChars = 8;
+    params.contrast = 1.0;
+    AsciiEngine engine(params);
+
+    cv::Mat image(40, 80, CV_8UC3, cv::Scalar(100, 100, 100));
+    image(cv::Rect(40, 0, 40, 40)).setTo(cv::Scalar(150, 150, 150));
+
+    const QString neutral = engine.generate(image);  // Rellena el caché.
+
+    params.contrast = 2.5;
+    engine.setParams(params);
+    const QString highContrast = engine.generate(image);
+
+    QVERIFY(neutral != highContrast);
+    QCOMPARE(highContrast.split(QLatin1Char('\n')).first().size(), 8);
 }
 
 QTEST_MAIN(TstAsciiEngine)

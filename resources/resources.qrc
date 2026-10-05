@@ -1,5 +1,7 @@
 <RCC>
-  <qresource prefix="/icons">
-    <file>icons/repo.svg</file>
+  <qresource prefix="/">
+    <file>icons/github.png</file>
+    <file>icons/flag_en.png</file>
+    <file>icons/flag_es.png</file>
   </qresource>
 </RCC>

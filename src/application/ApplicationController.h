@@ -16,11 +16,11 @@ class BackgroundRemovalService;
 namespace ascii_converter::application {
 
 // Orquesta ImageLoader -> ImageValidator -> QImage en un hilo en segundo
-// plano (Secciones 7, 23: nunca bloquear la UI); a partir de la imagen
+// plano; a partir de la imagen
 // ya cargada (o del resultado de BackgroundRemovalService, si está
 // activo), AsciiEngine cada vez que cambian los parámetros, con
-// debounce (Sección 27). Es la ÚNICA clase que conoce tanto OpenCV como
-// Qt: MainWindow solo conoce esta clase y tipos de Qt (Sección 8).
+// debounce. Es la ÚNICA clase que conoce tanto OpenCV como
+// Qt: MainWindow solo conoce esta clase y tipos de Qt.
 class ApplicationController : public QObject {
     Q_OBJECT
 
@@ -32,9 +32,9 @@ public slots:
     void loadImage(const QString& filePath);
     void updateAsciiParams(const ascii::AsciiParams& params);
 
-    // Fase 8: activa/desactiva la eliminación de fondo. Recalcula en
-    // segundo plano (es una operación de IA, Sección 7) y actualiza
-    // tanto el preview como el ASCII con el resultado.
+    // Activa/desactiva la eliminación de fondo. Recalcula en segundo
+    // plano (es una operación de IA) y actualiza tanto el preview como
+    // el ASCII con el resultado.
     void setBackgroundRemovalEnabled(bool enabled);
 
 signals:
@@ -44,7 +44,7 @@ signals:
 
     // Se emite cuando el usuario activa la eliminación de fondo pero no
     // se pudo aplicar (sin modelo, o fallo de inferencia) — la app sigue
-    // funcionando con la imagen original, solo se informa (Sección 9).
+    // funcionando con la imagen original, solo se informa.
     void backgroundRemovalUnavailable(const QString& warning);
 
 private:
@@ -68,4 +68,4 @@ private:
     QTimer m_asciiDebounceTimer;
 };
 
-} // namespace ascii_converter::application
+}  // namespace ascii_converter::application

@@ -9,4 +9,4 @@ bool BrowserService::openUrl(const QString& url) const {
     return QDesktopServices::openUrl(QUrl(url));
 }
 
-} // namespace ascii_converter::platform
+}  // namespace ascii_converter::platform

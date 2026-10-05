@@ -21,6 +21,6 @@ inline constexpr const char* kContrast = "processing/contrast";
 inline constexpr const char* kBrightness = "processing/brightness";
 inline constexpr const char* kCharacterRamp = "ascii/characterRamp";
 inline constexpr const char* kBackgroundRemovalEnabled = "ml/backgroundRemovalEnabled";
-} // namespace settings_keys
+}  // namespace settings_keys
 
-} // namespace ascii_converter
+}  // namespace ascii_converter

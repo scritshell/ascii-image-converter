@@ -95,7 +95,7 @@ void TstApplicationController::rapidParamUpdatesAreDebouncedToOneRegeneration() 
     // Esperamos más que el intervalo de debounce (120ms).
     QTest::qWait(400);
 
-    // Sección 27: solo debe haberse regenerado UNA vez, no tres.
+    // Solo debe haberse regenerado UNA vez, no tres.
     QCOMPARE(asciiSpy.count(), 1);
 
     // Y el resultado debe corresponder a los ÚLTIMOS parámetros (c),

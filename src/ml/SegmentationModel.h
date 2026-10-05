@@ -8,13 +8,11 @@ namespace ascii_converter::ml {
 struct SegmentationResult {
     bool success = false;
     QString errorMessage;
-    cv::Mat mask; // CV_8UC1, mismo tamaño que la imagen de entrada.
-                  // 0 = fondo, 255 = primer plano, con gradación entre medias.
+    cv::Mat mask;  // CV_8UC1, mismo tamaño que la imagen de entrada.
+                   // 0 = fondo, 255 = primer plano, con gradación entre medias.
 };
 
-// Interfaz pequeña y sustituible (Sección 3: "la arquitectura debe
-// permitir introducir o cambiar el modelo posteriormente sin reescribir
-// todo el programa"). BackgroundRemovalService SOLO conoce esta
+// Interfaz pequeña y sustituible. BackgroundRemovalService SOLO conoce esta
 // interfaz — nunca ONNX Runtime ni ningún detalle de un modelo concreto.
 class SegmentationModel {
 public:
@@ -22,4 +20,4 @@ public:
     virtual SegmentationResult segment(const cv::Mat& bgrImage) const = 0;
 };
 
-} // namespace ascii_converter::ml
+}  // namespace ascii_converter::ml
