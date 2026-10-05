@@ -5,13 +5,7 @@
 
 namespace ascii_converter::ml {
 
-// Implementación de SegmentationModel contra un modelo U²-Net / U²-Netp
-// (ver ARCHITECTURE.md § "Estrategia ONNX Runtime" y LICENSES.md).
-// Encapsula el pre/post-procesado específico de este modelo (resize a
-// 320x320, normalización ImageNet, layout NCHW) para que
-// BackgroundRemovalService no tenga que saber nada de esto — si el día
-// de mañana se cambia de modelo, solo hace falta otra clase que cumpla
-// SegmentationModel.
+// Implementación de SegmentationModel para U²-Net / U²-Netp.
 class U2NetSegmentationModel : public SegmentationModel {
 public:
     explicit U2NetSegmentationModel(const QString& modelPath);

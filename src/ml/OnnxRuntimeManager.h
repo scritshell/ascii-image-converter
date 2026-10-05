@@ -47,11 +47,7 @@ public:
         std::vector<int64_t> shape;
     };
 
-    // Ejecuta inferencia asumiendo un único tensor de entrada y un único
-    // tensor de salida, ambos float32 — suficiente para el caso de uso
-    // de segmentación de la Fase 8 (imagen -> máscara). Si se necesitara
-    // un modelo con múltiples entradas/salidas más adelante, se ampliaría
-    // esta interfaz sin afectar al resto de la app.
+    // Ejecuta inferencia con un tensor de entrada y otro de salida float32.
     InferenceOutput run(const std::vector<float>& inputData, const std::vector<int64_t>& inputShape) const;
 
 private:

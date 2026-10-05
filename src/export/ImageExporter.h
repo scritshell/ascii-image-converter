@@ -7,15 +7,9 @@
 namespace ascii_converter::exporting {
 
 // Renderiza el ASCII a una imagen PNG NUEVA con fuente monoespaciada —
-// NO es la imagen original convertida a PNG (Sección 16).
+// NO es la imagen original convertida a PNG.
 //
-// Decisión de diseño: fondo claro y texto oscuro (convención estándar de
-// ASCII art para imprimir/compartir), aunque el preview en pantalla usa
-// el tema oscuro de la app (Sección 30). Como los caracteres densos
-// representan zonas oscuras del original (Sección 12), más "tinta" en la
-// imagen exportada = zona más oscura, igual que en la fuente — son
-// contextos distintos a propósito: uno es UI de la app, el otro es el
-// artefacto final que se comparte o imprime.
+// La imagen exportada usa fondo claro y texto oscuro.
 class ImageExporter {
 public:
     struct RenderOptions {

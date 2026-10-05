@@ -16,9 +16,6 @@ namespace ascii_converter::application {
 
 namespace {
 
-// Resultado de la carga en segundo plano (Sección 7). Vive solo en este
-// .cpp: nadie fuera de ApplicationController necesita conocer esta forma
-// intermedia.
 struct LoadOutcome {
     bool success = false;
     QImage preview;
@@ -77,9 +74,6 @@ ApplicationController::ApplicationController(QObject* parent)
 ApplicationController::~ApplicationController() = default;
 
 void ApplicationController::loadImage(const QString& filePath) {
-    // La decodificación/validación se ejecuta en el pool de hilos de Qt
-    // (QtConcurrent), no en el hilo de UI — una imagen grande no debe
-    // congelar la ventana (Secciones 7 y 23).
     auto* watcher = new QFutureWatcher<LoadOutcome>(this);
     connect(watcher, &QFutureWatcher<LoadOutcome>::finished, this, [this, watcher]() {
         const LoadOutcome outcome = watcher->result();

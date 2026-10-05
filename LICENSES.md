@@ -1,9 +1,7 @@
 # LICENSES.md
 
 Este documento resume las implicaciones de licencia de cada dependencia,
-para evitar sorpresas en una distribución futura. **No es asesoría
-legal** — antes de una distribución comercial, conviene una revisión
-formal, especialmente en lo relativo al modelo ONNX que se acabe usando.
+para facilitar la revisión de una distribución. **No es asesoría legal.**
 
 ## Qt 6
 - Disponible bajo **LGPLv3** (uso gratuito, incluida distribución
@@ -23,32 +21,21 @@ formal, especialmente en lo relativo al modelo ONNX que se acabe usando.
 - Licencia **MIT**. Permisiva, sin restricciones relevantes para este
   proyecto.
 
-## Modelo de segmentación: U²-Netp (Fase 8)
+## Modelo de segmentación: U²-Netp
 
-- **Licencia: Apache-2.0.** Confirmada directamente en el repositorio
-  oficial (`xuebinqin/U-2-Net`, propietario del modelo) y corroborada de
-  forma independiente por al menos tres fuentes más (Hugging Face
-  model cards de `BritishWerewolf/U-2-Net*`, y metadatos del propio
-  repo) — no se ha bundleado nada sin verificar esto primero (Sección 37).
+- **Licencia: Apache-2.0.** El modelo procede del repositorio oficial
+  (`xuebinqin/U-2-Net`).
 - **No se distribuye en este repositorio** (ver `.gitignore`): es un
   fichero de ~4,5 MB. Se descarga desde la fuente oficial de
   distribución en ONNX — el propio repositorio `danielgatis/rembg`
   (herramienta que empaqueta este mismo modelo para uso general) lo aloja
   en sus GitHub Releases:
   `https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2netp.onnx`
-  — ver `BUILDING.md` para las instrucciones completas.
-- **isnet-anime** (variante entrenada específicamente para personajes
-  anime, mencionada como candidata en `ARCHITECTURE.md`) queda pendiente
-  de evaluación en una fase posterior: antes de bundlearla habría que
-  verificar la licencia exacta del checkpoint concreto, que no todos los
-  mirrors documentan igual — no se ha hecho esa verificación todavía,
-  así que no se usa por ahora.
-- **Descartados explícitamente:** los modelos de la familia BRIA
-  (RMBG-2.0 y similares) — ver ARCHITECTURE.md para el razonamiento.
+  — el modelo no se incluye en este repositorio.
 
 ## Icono de GitHub
-- El icono incluido en `resources/icons/repo.svg` es un glifo genérico
-  creado para este proyecto, **no** el logo oficial de GitHub (que está
-  registrado como marca). Si se prefiere usar el Octicon oficial de
-  GitHub, su set de iconos se distribuye bajo licencia MIT y puede
-  sustituirse manualmente.
+- `resources/icons/github.png` es el logotipo de GitHub (marca
+  registrada de GitHub, Inc.), usado únicamente como enlace hacia un
+  perfil de GitHub — el uso previsto por las propias directrices de
+  marca de GitHub. No se usa para dar a entender afiliación con GitHub
+  ni para ningún otro propósito.
